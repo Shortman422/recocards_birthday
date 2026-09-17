@@ -100,12 +100,13 @@
 
 # **Integrated Mods**
 
-- Rhythm Arcade
-- Punch-Out Arcade
-- GlimmersBirthdayed
-- Celebratium
-- Hämis Party
-- Custom Credits
+* Rhythm Arcade
+* Punch-Out Arcade
+* GlimmersBirthdayed
+* Celebratium
+* Hämis Party
+* Custom Credits
+* Chests are Presents
 
 # **Installation**
 
@@ -222,6 +223,4 @@
 ## 
 
 ## card\_a82fd190ac21.png
-
-
 

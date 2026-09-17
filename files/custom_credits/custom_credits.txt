@@ -31,6 +31,9 @@ ARCADE MACHINES
 Arntorius
 Purdymouf
 [SPACE:2]
+CHESTS ARE PRESENTS
+IndoorCat
+[SPACE:2]
 CUSTOM POTIONS
 Arntorius
 [SPACE:7]
