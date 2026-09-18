@@ -100,8 +100,10 @@
 
 # **Integrated Mods**
 
-* Rhythm Arcade
-* Punch-Out Arcade
+* Mortal Kombat Arcade
+* Rhythm Arcade (first Holy Mountain)
+* Punch-Out Arcade (3rd Holy Mountain)
+* Mortal Kombat Arcade (6th Holy Mountain)
 * GlimmersBirthdayed
 * Celebratium
 * Hämis Party

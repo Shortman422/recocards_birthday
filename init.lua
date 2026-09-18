@@ -3,6 +3,7 @@ ModLuaFileAppend("data/scripts/gun/gun_actions.lua","mods/recocards_birthday/fil
 ModLuaFileAppend("data/scripts/gun/gun_actions.lua","mods/recocards_birthday/files/glimmer_birthday/gun_actions.lua")
 dofile_once("mods/recocards_birthday/files/glimmer_birthday/glimmer.lua")
 dofile_once("mods/recocards_birthday/files/punchout_arcade/arcade.lua")
+dofile_once("mods/recocards_birthday/files/mortal_kombat/arcade.lua")
 dofile_once("mods/recocards_birthday/files/rhythm_arcade/arcade.lua")
 dofile_once("mods/recocards_birthday/files/celebratium/celebratium.lua")
 
@@ -84,6 +85,7 @@ function OnModInit()
     RhythmArcade_OnModInit()
     BirthdayGlimmer_OnModInit()
     PunchOutArcade_OnModInit()
+    MortalKombatArcade_OnModInit()
     ModMaterialsFileAdd(
         "mods/recocards_birthday/files/birthday_materials.xml"
     )
@@ -1967,6 +1969,7 @@ end
 function OnWorldPreUpdate()
     RhythmArcade_OnWorldPreUpdate()
     PunchOutArcade_OnWorldPreUpdate()
+    MortalKombatArcade_OnWorldPreUpdate()
 
     if gui == nil then
         gui=GuiCreate()
@@ -1989,4 +1992,5 @@ end
 function OnPlayerDied()
     RhythmArcade_OnPlayerDied()
     PunchOutArcade_OnPlayerDied()
+    MortalKombatArcade_OnPlayerDied()
 end

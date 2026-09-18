@@ -1,0 +1,5 @@
+<Entity name="mk_arcade_machine" tags="mk_arcade_machine">
+  <SpriteComponent image_file="mods/recocards_birthday/files/mortal_kombat/files/gfx/arcade/arcade_machine.xml" rect_animation="idle" offset_x="0" offset_y="0" z_index="0.8" />
+  <InteractableComponent radius="20" ui_text="$mk_arcade_play" name="mk_arcade" exclusivity_group="1" />
+  <HitboxComponent aabb_min_x="-20" aabb_max_x="20" aabb_min_y="-68" aabb_max_y="0" />
+</Entity>
