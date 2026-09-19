@@ -18,7 +18,7 @@
 -- Requests carry the chatter's numeric twitch id (from the raw IRC tags) so
 -- cosmetics resolve via users.by_twitch_id.
 
-local users = dofile_once("mods/recocards_birthday/files/scripts/sweatling/users.lua")
+local users = dofile_once("mods/recocards_birthday/files/scripts/sweatling/sweatling_users.lua")
 local SL    = dofile_once("mods/recocards_birthday/files/scripts/sweatling/sweatling_layers.lua")
 local CFG   = dofile_once("mods/recocards_birthday/files/scripts/sweatling/moist_mob_config.lua")
 
