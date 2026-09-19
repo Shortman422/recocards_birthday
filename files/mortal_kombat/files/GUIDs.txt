@@ -1,0 +1,26 @@
+{4bce5662-de5a-06a1-1735-b4714672b1bc} bank:/Master Bank.strings
+{a8684f9f-d899-40e3-9178-f74e18c51f6f} bank:/MortalKombat
+{48f69774-e52a-4fda-9ae8-14a7552c9d08} event:/MortalKombat/BGM
+{db4758c7-d840-4331-a422-da8833a76ffd} event:/MortalKombat/BGM/create
+{cc8de633-801c-4dec-bf63-a2217fe90cf8} event:/MortalKombat/Efeito sonoro Mortal Kombat (Get over here) - Mortal Kombat sound effect (Get over here)
+{f39ff13f-c638-4cd9-8216-5cbdb02d9c77} event:/MortalKombat/FatalityBGM/create
+{ae46d399-e074-4086-b5b5-bf762f601014} event:/MortalKombat/FinishHimBGM/create
+{e139f38e-7e69-42bf-830f-aa97e36a42c4} event:/MortalKombat/Finish_him_BGM
+{375ef9f5-e41d-43e8-81af-13df94d1bf9a} event:/MortalKombat/MatchOverBGM/create
+{80863bee-ef9d-4055-96c8-daa223db5faf} event:/MortalKombat/TOASTY SOUND EFFECT (MORTAL KOMBAT)
+{1df064dd-aaa6-4158-8bb1-6b23ee4114ee} event:/MortalKombat/blocked_hit
+{8a15f51f-55f2-4165-974b-4e1a5cab05b4} event:/MortalKombat/fatality
+{dc4a1d37-c892-4313-b866-c40f26234502} event:/MortalKombat/fatality_BGM
+{d4d4557a-f5b9-4aad-b6e9-56fe6e08c115} event:/MortalKombat/fight
+{49379a27-167f-4c22-bcf1-be37cfce2ddd} event:/MortalKombat/finish_him
+{504def9f-8a4e-48a7-9a1a-b7e5ccb91705} event:/MortalKombat/jonny_got_fatalitied
+{c048cdf2-3815-49f8-9ff7-1d9994ed8510} event:/MortalKombat/jonny_wins
+{fcdd5f4d-63c1-4c13-8d19-f3472a0d2dec} event:/MortalKombat/kick_hit
+{d831e9c0-552b-4b24-a437-c7ffc971bf5a} event:/MortalKombat/match_over_BGM)
+{aba069cc-9c67-4002-99d6-f33e5069866d} event:/MortalKombat/punch_hit
+{259ff54a-5222-4ed2-8f1e-25a05f88e949} event:/MortalKombat/scorpion_got_fatalitied
+{b4632ef1-16ea-44b1-9b9a-7853331a7ca4} event:/MortalKombat/scorpion_wins
+{cadeefec-dbbe-4f49-9f14-fb626fc7dfdb} event:/MortalKombat/scorpions_fataliy_projectile
+{0e3c9e26-e4aa-4d83-8201-527296942be8} event:/MortalKombat/sweep_hit
+{11fed0b2-071c-4324-a654-2c8e5446a426} event:/MortalKombat/woosh_kick
+{4ab9384f-bef6-46cc-b626-735d1e802bf7} event:/MortalKombat/woosh_punch

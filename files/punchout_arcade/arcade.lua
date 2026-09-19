@@ -1,7 +1,7 @@
 local BASE = "mods/recocards_birthday/files/punchout_arcade/"
 
 local ARCADE_X = -683
-local ARCADE_Y = 2954
+local ARCADE_Y = 5003
 
 local RAT_X = 142
 local RAT_Y = 36

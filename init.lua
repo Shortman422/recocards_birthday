@@ -3,6 +3,7 @@ ModLuaFileAppend("data/scripts/gun/gun_actions.lua","mods/recocards_birthday/fil
 ModLuaFileAppend("data/scripts/gun/gun_actions.lua","mods/recocards_birthday/files/glimmer_birthday/gun_actions.lua")
 dofile_once("mods/recocards_birthday/files/glimmer_birthday/glimmer.lua")
 dofile_once("mods/recocards_birthday/files/punchout_arcade/arcade.lua")
+dofile_once("mods/recocards_birthday/files/mortal_kombat/arcade.lua")
 dofile_once("mods/recocards_birthday/files/rhythm_arcade/arcade.lua")
 dofile_once("mods/recocards_birthday/files/celebratium/celebratium.lua")
 
@@ -80,10 +81,12 @@ end
 -- === end Moist Mobbing wiring ================================================
 
 function OnModInit()
+    ModDevGenerateSpriteUVsForDirectory("mods/recocards_birthday/data/enemies_gfx/player.png")
     BirthdayCredits_OnModInit()
     RhythmArcade_OnModInit()
     BirthdayGlimmer_OnModInit()
     PunchOutArcade_OnModInit()
+    MortalKombatArcade_OnModInit()
     ModMaterialsFileAdd(
         "mods/recocards_birthday/files/birthday_materials.xml"
     )
@@ -1747,120 +1750,16 @@ end
 
 
 local function apply_birthday_player_sprites(player)
-    local function patch_entity_visuals(entity)
-        local sprites =
-            EntityGetComponentIncludingDisabled(
-                entity,
-                "SpriteComponent"
-            ) or {}
-
-        for _,sprite in ipairs(sprites) do
-            local image =
-                ComponentGetValue2(
-                    sprite,
-                    "image_file"
-                ) or ""
-
-            if
-                string.find(
-                    image,
-                    "player_arm_no_item.xml",
-                    1,
-                    true
-                ) ~= nil
-            then
-                ComponentSetValue2(
-                    sprite,
-                    "image_file",
-                    "mods/recocards_birthday/files/gfx/birthday_mina_arm.xml"
-                )
-
-            elseif
-                string.find(
-                    image,
-                    "player_arm.xml",
-                    1,
-                    true
-                ) ~= nil and
-                string.find(
-                    image,
-                    "player_arm_no_item.xml",
-                    1,
-                    true
-                ) == nil
-            then
-                ComponentSetValue2(
-                    sprite,
-                    "image_file",
-                    "mods/recocards_birthday/files/gfx/birthday_mina_arm_item.xml"
-                )
-
-            elseif
-                string.find(
-                    image,
-                    "player.xml",
-                    1,
-                    true
-                ) ~= nil and
-                string.find(
-                    image,
-                    "playerghost",
-                    1,
-                    true
-                ) == nil
-            then
-                ComponentSetValue2(
-                    sprite,
-                    "image_file",
-                    "mods/recocards_birthday/files/gfx/birthday_mina_player.xml"
-                )
-            end
-        end
-
-        local children =
-            EntityGetAllChildren(entity) or {}
-
-        for _,child in ipairs(children) do
-            patch_entity_visuals(child)
-        end
-    end
-
-    patch_entity_visuals(player)
-
     local children =
         EntityGetAllChildren(player) or {}
 
     for _,child in ipairs(children) do
-        local child_name =
-            string.lower(
-                EntityGetName(child) or ""
-            )
+        local name =
+            EntityGetName(child) or ""
 
-        local child_tags =
-            string.lower(
-                EntityGetTags(child) or ""
-            )
-
-        if
-            string.find(child_name,"cape",1,true) ~= nil or
-            string.find(child_tags,"cape",1,true) ~= nil
-        then
+        if name == "cape" then
             EntityKill(child)
         end
-    end
-
-    local verlet =
-        EntityGetComponentIncludingDisabled(
-            player,
-            "VerletPhysicsComponent"
-        ) or {}
-
-    for _,component in ipairs(verlet) do
-        EntitySetComponentIsEnabled(
-            player,
-            component,
-            false
-        )
     end
 end
 
@@ -1967,6 +1866,7 @@ end
 function OnWorldPreUpdate()
     RhythmArcade_OnWorldPreUpdate()
     PunchOutArcade_OnWorldPreUpdate()
+    MortalKombatArcade_OnWorldPreUpdate()
 
     if gui == nil then
         gui=GuiCreate()
@@ -1989,4 +1889,5 @@ end
 function OnPlayerDied()
     RhythmArcade_OnPlayerDied()
     PunchOutArcade_OnPlayerDied()
+    MortalKombatArcade_OnPlayerDied()
 end
