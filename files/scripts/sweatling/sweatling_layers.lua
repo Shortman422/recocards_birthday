@@ -198,9 +198,8 @@ function M.attach_sweatling_name(entity, name, config)
 
     local name_scale = config.scale * NAME_SCALE_RATIO
     local name_pad = config.name_pad or NAME_PAD
-
-    -- Start the name at the top left edge of the sweatling border
-    local offset_x = ((BORDER_SIZE / 2) * config.scale)/name_scale
+    local text_width = #name * 4
+    local offset_x = text_width / 2
     local offset_y = ((BORDER_SIZE / 2) * config.scale + (GLYPH_H + name_pad) * name_scale)/name_scale
 
     EntityAddComponent2(entity, "SpriteComponent", {

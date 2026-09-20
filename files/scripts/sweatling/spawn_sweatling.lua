@@ -14,7 +14,7 @@ local SL =
 -- scale = on-screen bust size; base_z/z_step place the layer stack in the
 -- foreground play layer (low z draws in front). name_pad = px (at name scale)
 -- between the border top and the name text.
-local CFG = { scale = 0.3, base_z = 1, z_step = 0.05, name_pad = 7 }
+local CFG = { scale = 0.3, base_z = -0.5, z_step = 0.05, name_pad = 7 }
 
 -- The border defines the visible square edge, so the hitbox/collision match the
 -- BORDER (78x78 centered) rather than the bust content. Scaled by CFG.scale.

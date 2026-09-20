@@ -6,6 +6,7 @@ dofile_once("mods/recocards_birthday/files/punchout_arcade/arcade.lua")
 dofile_once("mods/recocards_birthday/files/mortal_kombat/arcade.lua")
 dofile_once("mods/recocards_birthday/files/rhythm_arcade/arcade.lua")
 dofile_once("mods/recocards_birthday/files/celebratium/celebratium.lua")
+dofile_once("mods/recocards_birthday/files/trial_of_the_gods/trial.lua")
 
 -- === Moist Mobbing wiring (ported from the sweatlingTest POC) ================
 -- Reusable debug logger (consumer side lives here; init.lua has `io`). Producers
@@ -1800,7 +1801,13 @@ local function spawn_birthday_spirit_radar_spell()
     end
 end
 
+
+function OnProjectileFired(shooter_id, projectile_id, initial_rng, position_x, position_y, target_x, target_y, send_message, unknown1, multicast_index, unknown3)
+    TrialOfTheGods_OnProjectileFired(shooter_id, projectile_id, initial_rng, position_x, position_y, target_x, target_y, send_message, unknown1, multicast_index, unknown3)
+end
+
 function OnPlayerSpawned(player_entity)
+    TrialOfTheGods_OnPlayerSpawned(player_entity)
     Celebratium_OnPlayerSpawned(player_entity)
     BirthdayGlimmer_OnPlayerSpawned(player_entity)
     apply_birthday_player_sprites(player_entity)
@@ -1864,6 +1871,7 @@ function OnWorldPostUpdate()
 end
 
 function OnWorldPreUpdate()
+    TrialOfTheGods_OnWorldPreUpdate()
     RhythmArcade_OnWorldPreUpdate()
     PunchOutArcade_OnWorldPreUpdate()
     MortalKombatArcade_OnWorldPreUpdate()

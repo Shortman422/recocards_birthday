@@ -83,6 +83,13 @@ mod_settings = {
         value_default = false,
         scope = MOD_SETTING_SCOPE_RUNTIME,
     },
+    {
+        id = "trial_of_the_gods_require_sampo",
+        ui_name = "Trial of the Gods: Require Sampo",
+        ui_description = "Require the Sampo to activate the Trial of the Gods entrance portal.",
+        value_default = true,
+        scope = MOD_SETTING_SCOPE_RUNTIME,
+    },
 }
 
 -- Standard boilerplate the framework calls. mod_settings_get_version /

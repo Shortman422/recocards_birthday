@@ -108,6 +108,7 @@
 * Hämis Party
 * Custom Credits
 * Chests are Presents
+* Apotis Trial of the Gods
 
 # **Installation**
 

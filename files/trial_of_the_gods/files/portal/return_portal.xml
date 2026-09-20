@@ -1,0 +1,7 @@
+<Entity name="totg_return_portal" tags="totg_return_portal">
+  <SpriteComponent image_file="mods/recocards_birthday/files/trial_of_the_gods/files/graphics/portal_static_blue.png" offset_x="22" offset_y="24" emissive="0" alpha="1" update_transform="1" z_index="5.0" />
+  <InteractableComponent radius="30" ui_text="Return to Mines" name="totg_return_portal" exclusivity_group="73" />
+  <LuaComponent script_interacting="mods/recocards_birthday/files/trial_of_the_gods/files/portal/interact_to_start.lua" execute_every_n_frame="-1" />
+  <LuaComponent script_source_file="mods/recocards_birthday/files/trial_of_the_gods/files/portal/portal_fx.lua" execute_every_n_frame="1" remove_after_executed="0" />
+  <AudioLoopComponent _tags="totg_portal_sound" file="data/audio/Desktop/misc.bank" event_name="misc/teleport_emitter_loop" auto_play="0" calculate_material_lowpass="0" volume_autofade_speed="0.08" />
+</Entity>

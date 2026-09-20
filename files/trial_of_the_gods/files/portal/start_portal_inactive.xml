@@ -1,0 +1,5 @@
+<Entity name="totg_arena_portal" tags="totg_arena_portal,totg_portal_start,totg_portal_inactive">
+  <SpriteComponent image_file="mods/recocards_birthday/files/trial_of_the_gods/files/graphics/portal_static_purple_without.png" offset_x="45" offset_y="70" emissive="0" alpha="1" update_transform="1" z_index="5.0" />
+  <InteractableComponent radius="38" ui_text="" name="totg_arena_portal_socket" exclusivity_group="73" />
+  <LuaComponent script_interacting="mods/recocards_birthday/files/trial_of_the_gods/files/portal/activate_start_portal.lua" execute_every_n_frame="-1" />
+</Entity>
