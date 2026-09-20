@@ -58,7 +58,7 @@ function death(damage_type_bit_field,damage_message,entity_thats_responsible,dro
     -- true only on the first successful discovery of this card.
     if RQ_DiscoverBirthdayCard(id,author) then
         EntityLoad(
-            "mods/recocards_birthday/particles/image_emitters/dnkMM_56_angry.xml",
+            "mods/recocards_birthday/particles/image_emitters/dnkAngry_28.xml",
             x,
             y
         )

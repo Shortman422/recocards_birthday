@@ -1,9 +1,34 @@
-<Entity name = "Emit_Effect" serialize = "1">
+<Entity name = "dnkMM" serialize = "1">
 	<InheritTransformComponent
 		only_position="1" 
     ></InheritTransformComponent>
 
+	<!-- Twitch emote on channel DunkOrSlam-->
   	<ParticleEmitterComponent 
+		image_animation_file="mods/recocards_birthday/particles/image_emitters/dnkMM_56_LineArt.png"
+		emitted_material_name="void_liquid"
+		render_ultrabright="1"
+		gravity.y="0.0"
+		lifetime_min="4"
+		lifetime_max="8"
+		count_min="8"
+		count_max="8"
+		render_on_grid="1"
+		collide_with_grid="0"
+		collide_with_gas_and_fire="0"
+		fade_based_on_lifetime="0"
+		cosmetic_force_create="1"
+		emission_interval_min_frames="1"
+		emission_interval_max_frames="1"
+		emit_cosmetic_particles="1"
+		image_animation_speed="10"
+		image_animation_loop="0"
+		image_animation_raytrace_from_center="0"
+		is_emitting="1" 
+    ></ParticleEmitterComponent>
+
+  	<ParticleEmitterComponent 
+		image_animation_file="mods/recocards_birthday/particles/image_emitters/dnkMM_56_Fill.png"
 		emitted_material_name="spark_blue"
 		gravity.y="0.0"
 		lifetime_min="4"
@@ -13,13 +38,12 @@
 		render_on_grid="1"
 		collide_with_grid="0"
 		collide_with_gas_and_fire="0"
-		fade_based_on_lifetime="1"
+		fade_based_on_lifetime="0"
 		cosmetic_force_create="1"
 		emission_interval_min_frames="1"
 		emission_interval_max_frames="1"
 		emit_cosmetic_particles="1"
-		image_animation_file="mods/recocards_birthday/particles/image_emitters/dnkMM_56.png"
-		image_animation_speed="15"
+		image_animation_speed="10"
 		image_animation_loop="0"
 		image_animation_raytrace_from_center="0"
 		is_emitting="1" 

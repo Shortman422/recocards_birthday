@@ -22,7 +22,7 @@ local users = dofile_once("mods/recocards_birthday/files/scripts/sweatling/sweat
 local SL    = dofile_once("mods/recocards_birthday/files/scripts/sweatling/sweatling_layers.lua")
 local CFG   = dofile_once("mods/recocards_birthday/files/scripts/sweatling/moist_mob_config.lua")
 
-local EMITTER      = "mods/recocards_birthday/particles/image_emitters/dnkMM_56.xml"
+local DNKMM      = "mods/recocards_birthday/particles/image_emitters/dnkMM_56.xml"
 local BG_SWEATLING = "mods/recocards_birthday/files/entities/sweatling_background.xml"
 
 -- Per-variant layer configs (see sweatling_layers.lua). Mobs are nameless so
@@ -157,13 +157,6 @@ local EMITTER_OFFSETS = {
     {  EMITTER_RADIUS, EMITTER_RADIUS*2/3 },
     {  EMITTER_RADIUS, -EMITTER_RADIUS*2/3 },
 }
-
--- Emitter emission rotation range (radians): tilt in [-pi/3, pi/3] of upright.
-local ROT_MIN = -math.pi / 3
-local ROT_MAX = math.pi / 3
-local function random_rotation()
-    return Random(math.floor(ROT_MIN * 1000), math.floor(ROT_MAX * 1000)) / 1000
-end
 
 -- Mob sweatling layer set: user cosmetics (or random when no user record) + the
 -- base emote. NO sign, NO border, NO name (unlike the gifter/interactable).
@@ -341,13 +334,10 @@ function MoistMob_SpawnSubEffect(celebrant)
 
     SetRandomSeed(x + GameGetFrameNum(), y - GameGetFrameNum())
 
-    -- 4 rotated emitters around the player.
+    -- 4 emitters around the player.
     for _, off in ipairs(EMITTER_OFFSETS) do
         local ex, ey = x + off[1], y + off[2]
-        local e = EntityLoad(EMITTER, ex, ey)
-        if e ~= nil and e ~= 0 then
-            EntitySetTransform(e, ex, ey, random_rotation())
-        end
+        EntityLoad(DNKMM, ex, ey)
     end
 
     -- Large gifter sweatling directly behind the player.
