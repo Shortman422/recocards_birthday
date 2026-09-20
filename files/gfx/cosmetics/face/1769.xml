@@ -1,0 +1,19 @@
+<Sprite
+  filename="mods/recocards_birthday/files/gfx/cosmetics/face/1769.png"
+  offset_x="35"
+  offset_y="35"
+  default_animation="idle" >
+
+  <RectAnimation
+    name="idle"
+    pos_x="0"
+    pos_y="0"
+    frame_count="8"
+    frame_width="70"
+    frame_height="70"
+    frame_wait="0.125"
+    frames_per_row="8"
+    loop="1" >
+  </RectAnimation>
+
+</Sprite>

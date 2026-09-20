@@ -51,19 +51,46 @@ local debug_profile = {
     },
 }
 
--- LIVE profile: the real WizeBot on dunkorslam. Patterns anchor on the ASCII
--- text that survives (the engine strips WizeBot's decorative arrows/emoji).
--- Verified in-game WizeBot resub format: " RE-SUB  <subscriber> (+N) ".
+-- LIVE profile: the real WizeBot on dunkorslam. WizeBot decorates messages with
+-- emoji/stars that the engine STRIPS (non-ASCII dropped), so patterns anchor on
+-- the ASCII residue. Real formats (shown here with emoji, then the ASCII residue
+-- the engine actually delivers):
+--   RE-SUB, ascii display name:
+--     "* RE-SUB * SchafersGaming (+23) *" -> " RE-SUB  SchafersGaming (+23) "
+--   RE-SUB, NON-ascii display name (login kept in parens):
+--     "* RE-SUB * <jp> (creamy_mami) (+42) *" -> " RE-SUB   (creamy_mami) (+42) "
+--   NEW SUB, self:
+--     "* NEW SUB * Alacron5 (+14) *" -> " NEW SUB  Alacron5 (+14) "
+--   NEW SUB, gifted (celebrate the GIFTER, not the recipient):
+--     "* NEW SUB * chasemynuts (+4) * (gift Offered by shankmo)"
+--       -> " NEW SUB  chasemynuts (+4)  ( Offered by shankmo)"
+--   COMMUNITY bulk gift (celebrate the GIFTER):
+--     "gift junjiwow * just offered 10 subscriptions to the community!"
+--       -> " junjiwow  just offered 10 subscriptions to the community!"
+--
+-- ORDER MATTERS: matched_trigger returns the FIRST entry whose plain-substring
+-- `phrase` is present. A gifted NEW SUB contains BOTH "Offered by" and "NEW SUB",
+-- so the gifter ("Offered by") entry MUST come before the plain "NEW SUB" entry
+-- to celebrate the gifter rather than the recipient.
+--
+-- The RE-SUB / self-NEW-SUB name pattern captures the login immediately before
+-- " (+N)": `([%w_]+)%)?%s*%(%+`. The `%)?` absorbs the closing paren in the
+-- non-ASCII-display-name form " (creamy_mami) (+42)", and the greedy [%w_]+ lands
+-- on the login token regardless of any stripped-emoji whitespace before it.
 local live_profile = {
     bot_name = "WizeBot",
     triggers = {
-        -- resub: subscriber sits between "RE-SUB" and " (+N)".
-        { phrase = "RE-SUB",  name = "RE%-SUB%s+([%w_]+)%s*%(%+" },
-        -- new (gifted) sub: celebrate the GIFTER after "Offered by".
-        { phrase = "NEW SUB", name = "Offered by%s+([%w_]+)" },
-        -- community bulk gift: celebrate the GIFTER before "just offered".
-        { phrase = "subscriptions to the community",
-          name = "([%w_]+)%s+just offered" },
+        -- community bulk gift: gifter before "just offered". (Checked first; its
+        -- message has neither RE-SUB nor NEW SUB, but keep it early for clarity.)
+        { phrase = "just offered", name = "([%w_]+)%s+just offered" },
+        -- gifted NEW SUB: celebrate the GIFTER after "Offered by". MUST precede
+        -- the plain "NEW SUB" entry (a gifted sub contains both phrases).
+        { phrase = "Offered by", name = "Offered by%s+([%w_]+)" },
+        -- resub: login sits right before " (+N)" (handles both the plain name and
+        -- the "(login) (+N)" non-ASCII-display-name form).
+        { phrase = "RE-SUB", name = "([%w_]+)%)?%s*%(%+" },
+        -- self NEW SUB: same "login before (+N)" capture.
+        { phrase = "NEW SUB", name = "([%w_]+)%)?%s*%(%+" },
     },
 }
 
