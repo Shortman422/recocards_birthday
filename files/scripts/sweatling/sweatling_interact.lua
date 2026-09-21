@@ -57,7 +57,7 @@ function interacting(entity_who_interacted,entity_interacted,interactable_name)
     -- RQ_DiscoverBirthdayCard has the single-grant guard internally and returns
     -- true only on the first successful discovery of this card. Emit the
     -- friendly/blue emission only on that first successful grant.
-    if RQ_DiscoverBirthdayCard(id,author) then
+    if RQ_DiscoverBirthdayCard(id,author,"pickup") then
         EntityLoad(
             "mods/recocards_birthday/particles/image_emitters/dnkLove_28.xml",
             x,

@@ -225,6 +225,10 @@ local gui = nil
 local book_page = 1
 local book_prev_found_count = -1
 local book_zoom_open = false
+local book_mode = "cards"
+local book_instruction_page = 1
+local BOOK_INSTRUCTIONS = dofile_once("mods/recocards_birthday/files/book_instructions.lua") or {}
+local BOOK_CARD_NOTES = dofile_once("mods/recocards_birthday/files/book_notes.lua") or {}
 local recocards_by_id = {}
 local pending_spawns = {}
 local quest_zones_cache = {}
@@ -978,6 +982,26 @@ local function reset_persistent_birthday_progress()
             0
         )
 
+        ModSettingSet(
+            "recocards_birthday.discovery_method_" .. card.id,
+            ""
+        )
+
+        ModSettingSet(
+            "recocards_birthday.discovery_note_" .. card.id,
+            0
+        )
+
+        GlobalsSetValue(
+            "recocards_discovery_method_" .. card.id,
+            ""
+        )
+
+        GlobalsSetValue(
+            "recocards_discovery_note_" .. card.id,
+            ""
+        )
+
         GameRemoveFlagRun(
             RQ_FoundFlag(card.id)
         )
@@ -993,8 +1017,28 @@ local function reset_persistent_birthday_progress()
         0
     )
 
+    ModSettingSet(
+        "recocards_birthday.note_sequence_pickup",
+        0
+    )
+
+    ModSettingSet(
+        "recocards_birthday.note_sequence_kill",
+        0
+    )
+
     GlobalsSetValue(
         "recocards_discovery_sequence",
+        "0"
+    )
+
+    GlobalsSetValue(
+        "recocards_note_sequence_pickup",
+        "0"
+    )
+
+    GlobalsSetValue(
+        "recocards_note_sequence_kill",
         "0"
     )
 
@@ -1357,6 +1401,46 @@ local function found_cards()
                 ) or 999999
 
             card.discovery_order = discovery_order
+
+            local acquisition =
+                tostring(
+                    ModSettingGet(
+                        "recocards_birthday.discovery_method_" .. card.id
+                    ) or ""
+                )
+
+            if acquisition ~= "kill" and acquisition ~= "pickup" then
+                acquisition =
+                    GlobalsGetValue(
+                        "recocards_discovery_method_" .. card.id,
+                        "pickup"
+                    )
+            end
+
+            if acquisition ~= "kill" then
+                acquisition = "pickup"
+            end
+
+            card.discovery_method = acquisition
+
+            local note_index =
+                tonumber(
+                    ModSettingGet(
+                        "recocards_birthday.discovery_note_" .. card.id
+                    )
+                )
+
+            if note_index == nil or note_index < 1 then
+                note_index =
+                    tonumber(
+                        GlobalsGetValue(
+                            "recocards_discovery_note_" .. card.id,
+                            "0"
+                        )
+                    ) or 0
+            end
+
+            card.discovery_note = note_index
             table.insert(found,card)
         end
     end
@@ -1431,6 +1515,7 @@ local function update_dev_tools()
 end
 
 local function draw_hud()
+    if GlobalsGetValue("recocards_book_open","0") == "1" then return end
     local total =
         tonumber(
             GlobalsGetValue(
@@ -1505,18 +1590,18 @@ local function draw_book()
     local cfg = RQ_ReadConfig(CFG)
     local maxw = tonumber(cfg.book_image_width) or 320
     local maxh = tonumber(cfg.book_image_max_height) or 205
+    local card_page_width = tonumber(cfg.book_card_page_width) or 70
     local magnify_width = tonumber(cfg.book_magnify_width) or 315
     local magnify_view_height = tonumber(cfg.book_magnify_view_height) or 235
 
     local screen_w,screen_h = GuiGetScreenDimensions(gui)
-
     local panel_w = 360
     local panel_h = 320
     local bx = math.floor((screen_w-panel_w)*0.5)
     local by = math.floor((screen_h-panel_h)*0.5)
-
     local cards = found_cards()
     local count = #cards
+    local instruction_count = #BOOK_INSTRUCTIONS
 
     if count ~= book_prev_found_count then
         if count > 0 then book_page = count end
@@ -1525,203 +1610,278 @@ local function draw_book()
 
     if book_page < 1 then book_page = 1 end
     if count > 0 and book_page > count then book_page = count end
+    if book_instruction_page < 1 then book_instruction_page = 1 end
+    if book_instruction_page > instruction_count then book_instruction_page = instruction_count end
+
+    local function ui_black()
+        if GuiColorSetForNextWidget ~= nil then
+            GuiColorSetForNextWidget(gui,0.08,0.08,0.08,1.0)
+        end
+    end
+
+    local function ui_text(x,y,value)
+        ui_black()
+        GuiText(gui,x,y,value)
+    end
+
+    local function ui_button(id,x,y,label)
+        ui_black()
+        return GuiButton(gui,id,x,y,label)
+    end
+
+    local function ui_text_centered(cx,y,value)
+        local w = #value * 4
+        if GuiGetTextDimensions ~= nil then
+            local ok,tw = pcall(GuiGetTextDimensions,gui,value)
+            if ok and type(tw) == "number" then w = tw end
+        end
+        ui_text(math.floor(cx-w*0.5),y,value)
+    end
+
+    local function ui_button_centered(id,cx,y,label)
+        local w = #label * 4
+        if GuiGetTextDimensions ~= nil then
+            local ok,tw = pcall(GuiGetTextDimensions,gui,label)
+            if ok and type(tw) == "number" then w = tw end
+        end
+        return ui_button(id,math.floor(cx-w*0.5),y,label)
+    end
+
+    local function note_index_for_card(card,pool)
+        if pool == nil or #pool == 0 then return 1 end
+        local index = tonumber(card.discovery_note) or 0
+        if index >= 1 and index <= #pool then return index end
+
+        local seed = (tonumber(card.discovery_order) or 1) * 97
+        local id = tostring(card.id or "")
+
+        for i=1,#id do
+            seed = seed + string.byte(id,i) * (i + 11)
+        end
+
+        return (seed % #pool) + 1
+    end
+
+    local function wrap_book_note(value,max_chars)
+        local lines = {}
+        local current = ""
+
+        for word in string.gmatch(value or "","%S+") do
+            local candidate = current == "" and word or (current .. " " .. word)
+
+            if #candidate > max_chars and current ~= "" then
+                table.insert(lines,current)
+                current = word
+            else
+                current = candidate
+            end
+        end
+
+        if current ~= "" then
+            table.insert(lines,current)
+        end
+
+        return lines
+    end
+
+    local function card_note_lines(card)
+        local method = card.discovery_method == "kill" and "kill" or "pickup"
+        local pool = BOOK_CARD_NOTES[method] or BOOK_CARD_NOTES.pickup or {}
+        if #pool == 0 then return {"A birthday card was added to the book."} end
+
+        local index = note_index_for_card(card,pool)
+        local note = tostring(pool[index] or pool[1] or "")
+        local author = tostring(card.author or "Birthday Spirit")
+        note = string.gsub(note,"{user}",author)
+
+        return wrap_book_note(note,24)
+    end
+
+    local function instruction_panel_path(index)
+        local numbered = MOD .. "/files/gfx/book_ui/book_panel_instructions_" .. string.format("%02d", index) .. ".png"
+        if ModDoesFileExist ~= nil and ModDoesFileExist(numbered) then
+            return numbered
+        end
+        return MOD .. "/files/gfx/book_ui/book_panel_instructions.png"
+    end
 
     GuiOptionsClear(gui)
     if GUI_OPTION ~= nil and GUI_OPTION.DrawNoHoverAnimation ~= nil then
         GuiOptionsAdd(gui,GUI_OPTION.DrawNoHoverAnimation)
     end
 
-    GuiZSetForNextWidget(gui,100)
-    if GuiColorSetForNextWidget ~= nil then
-        GuiColorSetForNextWidget(gui,1.0,1.0,1.0,1.0)
-    end
-    GuiImageNinePiece(
-        gui,
-        5000,
-        bx,
-        by,
-        panel_w,
-        panel_h,
-        0.96,
-        "data/ui_gfx/decorations/9piece0_gray.png",
-        "data/ui_gfx/decorations/9piece0_gray.png"
-    )
+    local z_panel = -100000
+    local z_card = -100010
+    local z_widgets = -100020
 
-    GuiZSet(gui,0)
-    GuiText(gui,bx+12,by+10,"Dunk's Birthday Book")
-    GuiText(gui,bx+12,by+22,tostring(count) .. " discovered")
-
-    if count == 0 then
-        GuiText(gui,bx+108,by+135,"The book is still empty.")
-        GuiOptionsClear(gui)
-        return
-    end
-
-    local card = cards[book_page]
-
-    if book_zoom_open then
-
+    if book_mode == "cards" and count > 0 and book_zoom_open then
+        local card = cards[book_page]
+        local panel_w_zoom = 410
+        local panel_h_zoom = 268
+        local panel_x = math.floor((screen_w-panel_w_zoom)*0.5)
+        local panel_y = math.floor((screen_h-panel_h_zoom)*0.5) - 20
         local reader_w = magnify_width + 18
-        local reader_h = magnify_view_height
-        local reader_x = math.floor((screen_w-reader_w)*0.5)
-        local reader_y = math.floor((screen_h-reader_h)*0.5) + 4
+        local reader_x = math.floor(panel_x + (panel_w_zoom-reader_w)*0.5)
+        local reader_y = panel_y + 44
+                local reader_h = panel_h_zoom - 72
+        local scale = magnify_width / card.w
 
-        GuiText(
-            gui,
-            math.floor(screen_w*0.5)-58,
-            math.max(8,reader_y-30),
-            "Magnified Birthday Card"
-        )
+        GuiZSetForNextWidget(gui,z_panel)
+        GuiImage(gui,5300,panel_x,panel_y,MOD .. "/files/gfx/book_ui/book_zoom_panel.png",1.0,1.0,1.0)
 
-        if GuiButton(
-            gui,
-            5302,
-            math.floor(screen_w*0.5)-28,
-            math.max(18,reader_y-18),
-            "Close Zoom"
-        ) then
+        GuiZSet(gui,z_widgets)
+        ui_text_centered(panel_x + panel_w_zoom*0.5,panel_y + 16,"Magnified Birthday Card")
+
+        if ui_button(5302,panel_x + panel_w_zoom - 74,panel_y + 16,"Close Zoom") then
             book_zoom_open = false
             GuiOptionsClear(gui)
             return
         end
 
-        local scale = magnify_width / card.w
-
-        GuiBeginScrollContainer(
-            gui,
-            5400,
-            reader_x,
-            reader_y,
-            reader_w,
-            reader_h,
-            true,
-            4,
-            4
-        )
-
+        GuiZSet(gui,z_card)
+        GuiBeginScrollContainer(gui,5400,reader_x,reader_y,reader_w,reader_h,true,4,4)
         GuiLayoutBeginVertical(gui,0,0,true,0,0)
-
         if GuiColorSetForNextWidget ~= nil then
             GuiColorSetForNextWidget(gui,1.0,1.0,1.0,1.0)
         end
-        GuiImage(
-            gui,
-            5401,
-            0,
-            0,
-            OUT .. "/" .. RQ_CardCurrentFile(card),
-            1.0,
-            scale,
-            scale
-        )
-
+        GuiImage(gui,5401,math.floor((reader_w-magnify_width)*0.5),0,OUT .. "/" .. RQ_CardCurrentFile(card),1.0,scale,scale)
         GuiLayoutEnd(gui)
         GuiEndScrollContainer(gui)
 
-        GuiText(
-            gui,
-            math.floor(screen_w*0.5)-10,
-            reader_y+reader_h+5,
-            tostring(book_page) .. " / " .. tostring(count)
-        )
-
         if card.links ~= nil and #card.links > 0 then
-            local link_y = reader_y+reader_h+17
-
+            local link_y = panel_y + panel_h_zoom + 4
+            GuiZSet(gui,z_widgets)
             for i,url in ipairs(card.links) do
-                local label =
-                    #card.links == 1 and
-                    "Open Link" or
-                    ("Open Link " .. tostring(i))
-
-                if GuiButton(
-                    gui,
-                    5500+i,
-                    math.floor(screen_w*0.5)-32,
-                    link_y + (i-1)*12,
-                    label
-                ) then
-                    RQ_RequestOpenCardLink(
-                        card.id,
-                        url
-                    )
+                local label = #card.links == 1 and "Open Link" or ("Open Link " .. tostring(i))
+                if ui_button_centered(5500+i,panel_x + panel_w_zoom*0.5,link_y + (i-1)*12,label) then
+                    RQ_RequestOpenCardLink(card.id,url)
                 end
             end
         end
 
-        GuiZSet(gui,0)
         GuiOptionsClear(gui)
         return
     end
 
-    local sx = maxw/card.w
-    local sy = maxh/card.h
-    local scale = math.min(sx,sy)
+    local panel_path = book_mode == "instructions" and instruction_panel_path(book_instruction_page) or (MOD .. "/files/gfx/book_ui/book_panel_cards.png")
+    GuiZSetForNextWidget(gui,z_panel)
+    GuiImage(gui,4999,bx,by,panel_path,1.0,1.0,1.0)
 
+    GuiZSet(gui,z_widgets)
+    ui_text(bx+20,by+20,"Dunk's Birthday Book")
+    ui_text(bx+20,by+35,tostring(count) .. " discovered")
+
+    if ui_button(5001,bx+185,by+18,book_mode == "cards" and "> Cards <" or "Cards") then
+        book_mode = "cards"
+        book_zoom_open = false
+    end
+
+    if ui_button(5002,bx+233,by+18,book_mode == "instructions" and "> Instructions <" or "Instructions") then
+        book_mode = "instructions"
+        book_zoom_open = false
+    end
+
+    if ui_button(5003,bx+320,by+18,"Close") then
+        GlobalsSetValue("recocards_book_open","0")
+        book_zoom_open = false
+        GuiOptionsClear(gui)
+        return
+    end
+
+    local content_x = bx + 22
+    local content_y = by + 58
+    local content_w = panel_w - 44
+    local content_h = 182
+    local footer_y = by + 264
+
+    if book_mode == "instructions" then
+        local page = BOOK_INSTRUCTIONS[book_instruction_page]
+        ui_text(content_x+6,content_y+2,page.title)
+        for i,line in ipairs(page.lines) do
+            ui_text(content_x+6,content_y+18 + (i-1)*11,line)
+        end
+
+        local nav_left = bx + panel_w*0.25
+        local nav_center = bx + panel_w*0.5
+        local nav_right = bx + panel_w*0.75
+
+        if book_instruction_page > 1 then
+            if ui_button_centered(5200,nav_left,footer_y,"< Previous") then
+                book_instruction_page = book_instruction_page-1
+            end
+        end
+
+        ui_text_centered(nav_center,footer_y+2,tostring(book_instruction_page) .. " / " .. tostring(instruction_count))
+
+        if book_instruction_page < instruction_count then
+            if ui_button_centered(5201,nav_right,footer_y,"Next >") then
+                book_instruction_page = book_instruction_page+1
+            end
+        end
+
+        GuiOptionsClear(gui)
+        return
+    end
+
+    if count == 0 then
+        ui_text(content_x+36,content_y+66,"The book is still empty.")
+        ui_text(content_x+14,content_y+82,"Find a Birthday Spirit to add")
+        ui_text(content_x+34,content_y+94,"your first card here.")
+        GuiOptionsClear(gui)
+        return
+    end
+
+    local card = cards[book_page]
+    local left_page_x = bx + 26
+    local left_page_y = content_y + 8
+    local right_page_x = bx + 198
+    local right_page_y = content_y -9
+    local right_page_w = 136
+    local right_page_h = 200
+    local scale_w = right_page_w / card.w
+    local scale_h = right_page_h / card.h
+    local scale = math.min(scale_w, scale_h)
     local draww = card.w*scale
     local drawh = card.h*scale
+    local imgx = right_page_x + (right_page_w-draww)*0.5
+    local imgy = right_page_y + (right_page_h-drawh)*0.5
+    local note_lines = card_note_lines(card)
 
-    local card_area_x = bx + 20
-    local card_area_y = by + 42
-    local card_area_w = panel_w - 40
-    local card_area_h = 210
+    ui_text(left_page_x,left_page_y,"A note about this card")
 
-    local imgx = card_area_x + (card_area_w-draww)*0.5
-    local imgy = card_area_y + (card_area_h-drawh)*0.5
+    for i,line in ipairs(note_lines) do
+        ui_text(left_page_x,left_page_y+20+(i-1)*11,line)
+    end
 
-    GuiZSetForNextWidget(gui,-10)
+    GuiZSetForNextWidget(gui,z_card)
     if GuiColorSetForNextWidget ~= nil then
         GuiColorSetForNextWidget(gui,1.0,1.0,1.0,1.0)
     end
     GuiImage(gui,5100,imgx,imgy,OUT .. "/" .. RQ_CardCurrentFile(card),1.0,scale,scale)
 
-    local footer_y = by + 258
-    GuiZSet(gui,-20)
-
+    GuiZSet(gui,z_widgets)
     if book_page > 1 then
-        local clicked = GuiButton(gui,5200,bx+16,footer_y,"< Previous")
-        if clicked then
-            book_page = book_page-1
-        end
+        if ui_button(5200,bx+18,footer_y,"< Previous") then book_page = book_page-1 end
     end
 
-    GuiText(gui,bx+166,footer_y+2,tostring(book_page) .. " / " .. tostring(count))
+    ui_text(bx+166,footer_y+2,tostring(book_page) .. " / " .. tostring(count))
 
     if book_page < count then
-        local clicked = GuiButton(gui,5201,bx+286,footer_y,"Next >")
-        if clicked then
-            book_page = book_page+1
-        end
+        if ui_button(5201,bx+286,footer_y,"Next >") then book_page = book_page+1 end
     end
 
-    local magnify_y = by + 286
-    if GuiButton(gui,5202,bx+145,magnify_y,"Magnify Card") then
-        book_zoom_open = true
-    end
+    local magnify_y = by + 285
+    if ui_button_centered(5202,bx+panel_w*0.5,magnify_y,"Magnify Card") then book_zoom_open = true end
 
     if card.links ~= nil and #card.links > 0 then
         for i,url in ipairs(card.links) do
-            local label =
-                #card.links == 1 and
-                "Open Link" or
-                ("Open Link " .. tostring(i))
-
-            if GuiButton(
-                gui,
-                5600+i,
-                bx+245,
-                magnify_y + (i-1)*12,
-                label
-            ) then
-                RQ_RequestOpenCardLink(
-                    card.id,
-                    url
-                )
+            local label = #card.links == 1 and "Open Link" or ("Open Link " .. tostring(i))
+            if ui_button(5600+i,bx+244,magnify_y + (i-1)*12,label) then
+                RQ_RequestOpenCardLink(card.id,url)
             end
         end
     end
 
-    GuiZSet(gui,0)
     GuiOptionsClear(gui)
 end
 

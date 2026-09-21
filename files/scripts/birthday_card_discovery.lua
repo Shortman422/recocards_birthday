@@ -1,7 +1,10 @@
 dofile_once("mods/recocards_birthday/files/scripts/util.lua")
+local RQ_BOOK_NOTES = dofile_once("mods/recocards_birthday/files/book_notes.lua") or {}
 
-function RQ_DiscoverBirthdayCard(id,author)
+function RQ_DiscoverBirthdayCard(id,author,acquisition)
     if id == nil or id == "" then return false end
+
+    acquisition = acquisition == "kill" and "kill" or "pickup"
 
     local flag = RQ_FoundFlag(id)
 
@@ -77,6 +80,62 @@ function RQ_DiscoverBirthdayCard(id,author)
     ModSettingSet(
         "recocards_birthday.discovery_sequence",
         sequence
+    )
+
+    ModSettingSet(
+        "recocards_birthday.discovery_method_" .. id,
+        acquisition
+    )
+
+    GlobalsSetValue(
+        "recocards_discovery_method_" .. id,
+        acquisition
+    )
+
+    local pool = RQ_BOOK_NOTES[acquisition] or {}
+    local note_counter_key = "recocards_birthday.note_sequence_" .. acquisition
+    local note_global_key = "recocards_note_sequence_" .. acquisition
+    local note_sequence = tonumber(GlobalsGetValue(note_global_key,"0")) or 0
+    local persistent_note_sequence = tonumber(ModSettingGet(note_counter_key)) or 0
+
+    if persistent_note_sequence > note_sequence then
+        note_sequence = persistent_note_sequence
+    end
+
+    note_sequence = note_sequence + 1
+    GlobalsSetValue(note_global_key,tostring(note_sequence))
+    ModSettingSet(note_counter_key,note_sequence)
+
+    local function gcd(a,b)
+        while b ~= 0 do
+            a,b = b,a % b
+        end
+        return a
+    end
+
+    local note_index = 1
+    if #pool > 0 then
+        local step = acquisition == "kill" and 53 or 37
+        step = step % #pool
+        if step == 0 then step = 1 end
+
+        while gcd(step,#pool) ~= 1 do
+            step = step + 1
+            if step >= #pool then step = 1 end
+        end
+
+        local offset = acquisition == "kill" and 29 or 17
+        note_index = (((note_sequence - 1) * step + offset) % #pool) + 1
+    end
+
+    ModSettingSet(
+        "recocards_birthday.discovery_note_" .. id,
+        note_index
+    )
+
+    GlobalsSetValue(
+        "recocards_discovery_note_" .. id,
+        tostring(note_index)
     )
 
     GamePrintImportant(

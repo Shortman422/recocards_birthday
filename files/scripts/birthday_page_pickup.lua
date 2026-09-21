@@ -31,7 +31,7 @@ function item_pickup(entity_item, entity_who_picked, item_name)
         ) or "Birthday Spirit"
 
     if id ~= nil and id ~= "" then
-        RQ_DiscoverBirthdayCard(id,author)
+        RQ_DiscoverBirthdayCard(id,author,"pickup")
     end
 
     EntityKill(entity_item)

@@ -56,7 +56,7 @@ function death(damage_type_bit_field,damage_message,entity_thats_responsible,dro
 
     -- RQ_DiscoverBirthdayCard has the single-grant guard internally and returns
     -- true only on the first successful discovery of this card.
-    if RQ_DiscoverBirthdayCard(id,author) then
+    if RQ_DiscoverBirthdayCard(id,author,"kill") then
         EntityLoad(
             "mods/recocards_birthday/particles/image_emitters/dnkAngry_28.xml",
             x,

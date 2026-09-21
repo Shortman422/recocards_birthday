@@ -70,7 +70,7 @@ function interacting(entity_who_interacted,entity_interacted,interactable_name)
 
     local x,y = EntityGetTransform(entity_interacted)
 
-    if RQ_DiscoverBirthdayCard(id,author) then
+    if RQ_DiscoverBirthdayCard(id,author,"pickup") then
         spawn_hearts(x,y)
     end
 

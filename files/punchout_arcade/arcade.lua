@@ -7,7 +7,7 @@ local RAT_X = 142
 local RAT_Y = 36
 local RAT_SCALE = 0.648
 local DUNK_X = 164
-local DUNK_Y = 106
+local DUNK_Y = 84
 local DUNK_SCALE = 0.72
 
 dofile_once("data/scripts/debug/keycodes.lua")
@@ -81,7 +81,7 @@ local gui=nil
 local S={active=false,phase="idle",machine=0,player=0,lock_x=0,lock_y=0,p_hp=100,t_hp=100,timer=99,
  p_state="idle",p_until=0,t_state="idle",t_until=0,next_attack=0,attack=nil,result="",last_frame=0,
  feedback="",feedback_until=0,shake_until=0,shake_power=0,hitstop_until=0,flash_until=0,punch_side=0,
- t_anim_start=0,t_anim_name="idle",hurt_variant="left",invuln_until=0,counter_until=0,dodged_attack=false,dodge_dir="",dodge_start=-9999,countin_start=0,reward_given=false,reward_line="",reward_level=0}
+ t_anim_start=0,t_anim_name="idle",hurt_variant="left",invuln_until=0,counter_until=0,dodged_attack=false,dodge_dir="",dodge_start=-9999,countin_start=0,reward_given=false,reward_line="",reward_level=0,ko_wig=false}
 local function get_player() local p=EntityGetWithTag("player_unit")
 return (p and #p>0) and p[1] or 0 end
 local function destroy_gui() if gui then GuiDestroy(gui)
@@ -98,6 +98,13 @@ if p==0 then return end
 local x,y=EntityGetTransform(p)
 if math.abs(x-ARCADE_X)>750 or math.abs(y-ARCADE_Y)>750 then return end
 if #(EntityGetInRadiusWithTag(ARCADE_X,ARCADE_Y,80,"punchout_arcade_machine") or {})==0 then EntityLoad(BASE.."files/arcade_machine.xml",ARCADE_X,ARCADE_Y) end end
+local function ko_wig_roll()
+ local x,y=ARCADE_X,ARCADE_Y
+ if S and S.player and S.player~=0 and EntityGetIsAlive(S.player) then x,y=EntityGetTransform(S.player) end
+ local f=GameGetFrameNum()
+ SetRandomSeed(math.floor(x)+f*17,math.floor(y)+f*31)
+ return Random(1,100)<=10
+end
 local function reset_fight()
  stop_result_jingle()
  local f=GameGetFrameNum()
@@ -130,6 +137,7 @@ S.dodge_start=-9999
 S.reward_given=false
 S.reward_line=""
 S.reward_level=0
+S.ko_wig=false
 end
 local function start_game(p,m) destroy_gui()
 S.active=true
@@ -168,6 +176,7 @@ if S.p_hp<=0 then S.phase="lost"
 reset_wins()
 S.result="K.O. - RAT WINS"
 S.p_state="ko"
+S.ko_wig=ko_wig_roll()
 stop_match_music()
 start_result_jingle("lose") end end
 local function hurt_tyson(d,variant) play_sfx("hit_tyson")
@@ -465,7 +474,11 @@ ppath="files/gfx/player/frames/r3c"..q..".png"
 ppath="files/gfx/player/frames/r4c"..q..".png"
  elseif S.p_state=="ko" then
   local q=math.min(3,1+math.floor(math.max(0,f-S.p_until+60)/12))
+  if S.ko_wig and q>=2 then
+ppath="files/gfx/player/frames/r8c"..q.."_wig.png"
+  else
 ppath="files/gfx/player/frames/r8c"..q..".png"
+  end
  elseif S.phase=="won" then
   ppath="files/gfx/player/frames/r9c"..tostring((math.floor(f/14)%2)+1)..".png"
  end
