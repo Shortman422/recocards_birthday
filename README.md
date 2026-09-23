@@ -1,8 +1,70 @@
 # **Recocard Birthday Card Quest — v5**
 
-## 
+
 
 ## This version adds the Sweatling System and Moist Mobbing
+
+
+
+# 
+
+# 
+
+# 
+
+# **Installation**
+
+# 
+
+## Copy the recocards\_birthday folder to:
+
+## 
+
+## ...\\Steam\\steamapps\\common\\Noita\\mods\\
+
+## 
+
+## Then:
+
+## 
+
+## Run bridge/start.bat
+
+## Start Noita.
+
+## Allow Unsafe Mods.
+
+## Enable the mod.
+
+## Restart Noita with mods enabled.
+
+# 
+
+# 
+
+# 
+
+# 
+
+# 
+
+# 
+
+# 
+
+# 
+
+# 
+
+# Spoilers:
+
+
+
+
+
+# 
+
+# 
 
 # 
 
@@ -44,6 +106,8 @@
 
 
 
+# 
+
 # **Sweatling System**
 
 # 
@@ -65,6 +129,8 @@
 ## Either outcome grants the card once; there is no gold or corpse drop.
 
 
+
+# 
 
 # **Moist Mobbing**
 
@@ -98,6 +164,8 @@
 
 
 
+# 
+
 # **Integrated Mods**
 
 * Rhythm Arcade (first Holy Mountain)
@@ -110,31 +178,7 @@
 * Chests are Presents
 * Apotis Trial of the Gods
 
-# **Installation**
 
-# 
-
-## Copy the recocards\_birthday folder to:
-
-## 
-
-## ...\\Steam\\steamapps\\common\\Noita\\mods\\
-
-## 
-
-## Then:
-
-## 
-
-## Run bridge/start.bat
-
-## Start Noita.
-
-## Allow Unsafe Mods.
-
-## Enable the mod.
-
-## Restart Noita with mods enabled.
 
 
 
