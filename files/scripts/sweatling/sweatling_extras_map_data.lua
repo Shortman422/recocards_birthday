@@ -25,7 +25,15 @@ return {
     },
     -- Raised sign (the "hand" slot). Under gfx/cosmetics/hand/.
     hand = {
-      { id = "hbd", name = "Happy Birthday Sign", layer = "hand", path = GFX .. "cosmetics/hand/hbd.xml" },
+      { id = "hbd", name = "Happy Birthday Sign", layer = "hand", path = GFX .. "cosmetics/hand/hbd.xml", weight = 50 },
+      { id = "hbd1", name = "Happy Birthday Envelope 1", layer = "hand", path = GFX .. "cosmetics/hand/hbd1.xml", weight = 100 },
+      { id = "hbd2", name = "Happy Birthday Envelope 2", layer = "hand", path = GFX .. "cosmetics/hand/hbd2.xml", weight = 100 },
+      { id = "hbd3", name = "Happy Birthday Envelope 3", layer = "hand", path = GFX .. "cosmetics/hand/hbd3.xml", weight = 100 },
+      { id = "hbd4", name = "Happy Birthday brisket", layer = "hand", path = GFX .. "cosmetics/hand/hbd_brisket.xml", weight = 10 },
+      { id = "hbd5", name = "Happy Birthday quack", layer = "hand", path = GFX .. "cosmetics/hand/hbd_quack.xml", weight = 10 },
+      { id = "hbd6", name = "Happy Birthday Envelope 6", layer = "hand", path = GFX .. "cosmetics/hand/hbd6.xml", weight = 100 },
+      { id = "hbd7", name = "Happy Birthday Cupcake", layer = "hand", path = GFX .. "cosmetics/hand/hbd_cupcake.xml", weight = 100 },
+
     },
     -- Decorative frames. Under gfx/cosmetics/border/. Variant-specific:
     -- giftling (interactable) and moist_mob (mob/gifter) borders.

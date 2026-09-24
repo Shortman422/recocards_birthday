@@ -22,8 +22,6 @@ local cmap = dofile_once("mods/recocards_birthday/files/scripts/sweatling/cosmet
 -- Mod-added decorations, resolved through the mapper (single source of truth).
 -- The border art is variant-specific, so it's resolved per-call in
 -- layer_for_border(id) rather than cached here.
-local SIGN = cmap.path_for("hand", "hbd")
-
 -- font_pixel_white metrics. Width per glyph is 6px (3px for "1"), matching the
 -- game's shop price code. Height is 7px (community-documented; the font file
 -- isn't in the extracted data to read directly).
@@ -71,7 +69,18 @@ end
 
 -- The raised sign (hand slot).
 function M.layer_for_sign()
-    return { layer = "hand", xml = SIGN }
+    local entry = nil
+    for _=1,64 do
+        local candidate = cmap.random("hand")
+        if candidate == nil then return nil end
+        entry = candidate
+        local weight = tonumber(candidate.weight) or 100
+        weight = math.max(0,math.min(100,weight))
+        if weight >= 100 or Random(1,100) <= weight then
+            break
+        end
+    end
+    return { layer = "hand", xml = cmap.path(entry) }
 end
 
 -- The decorative border frame (backmost). `border_id` selects the variant art

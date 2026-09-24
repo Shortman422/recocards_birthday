@@ -1,6 +1,6 @@
 <!-- Original sweatling sign materials from Viowlet, modified with text change. -->
 <Sprite
-  filename="mods/recocards_birthday/files/gfx/cosmetics/hand/hbd.png"
+  filename="mods/recocards_birthday/files/gfx/cosmetics/hand/hbd_cupcake.png"
   offset_x="35"
   offset_y="35"
   default_animation="idle" >
