@@ -30,10 +30,20 @@ return {
       { id = "hbd2", name = "Happy Birthday Envelope 2", layer = "hand", path = GFX .. "cosmetics/hand/hbd2.xml", weight = 100 },
       { id = "hbd3", name = "Happy Birthday Envelope 3", layer = "hand", path = GFX .. "cosmetics/hand/hbd3.xml", weight = 100 },
       { id = "hbd4", name = "Happy Birthday brisket", layer = "hand", path = GFX .. "cosmetics/hand/hbd_brisket.xml", weight = 10 },
-      { id = "hbd5", name = "Happy Birthday quack", layer = "hand", path = GFX .. "cosmetics/hand/hbd_quack.xml", weight = 10 },
+      { id = "hbd5", name = "Happy Birthday quack", layer = "hand", path = GFX .. "cosmetics/hand/hbd_quack.xml", weight = 25 },
       { id = "hbd6", name = "Happy Birthday Envelope 6", layer = "hand", path = GFX .. "cosmetics/hand/hbd6.xml", weight = 100 },
-      { id = "hbd7", name = "Happy Birthday Cupcake", layer = "hand", path = GFX .. "cosmetics/hand/hbd_cupcake.xml", weight = 100 },
-
+      { id = "hbd7", name = "Happy Birthday Cupcake", layer = "hand", path = GFX .. "cosmetics/hand/hbd_cupcake.xml", weight = 75 },
+      { id = "hbd8", name = "Happy Birthday Envelope 7", layer = "hand", path = GFX .. "cosmetics/hand/hbd7.xml", weight = 100 },
+      { id = "hbd9", name = "Happy Birthday Envelope 8", layer = "hand", path = GFX .. "cosmetics/hand/hbd8.xml", weight = 100 },
+      { id = "hbd10", name = "Happy Birthday Envelope 9", layer = "hand", path = GFX .. "cosmetics/hand/hbd9.xml", weight = 100 },
+      { id = "hbd11", name = "Happy Birthday Envelope 10", layer = "hand", path = GFX .. "cosmetics/hand/hbd10.xml", weight = 100 },
+      { id = "hbd12", name = "Happy Birthday Cube", layer = "hand", path = GFX .. "cosmetics/hand/hbd11.xml", weight = 50 },
+      { id = "hbd13", name = "Happy Birthday Envelope 12", layer = "hand", path = GFX .. "cosmetics/hand/hbd12.xml", weight = 100 },
+      { id = "hbd14", name = "Happy Birthday Envelope 13", layer = "hand", path = GFX .. "cosmetics/hand/hbd13.xml", weight = 100 },
+      { id = "hbd15", name = "Happy Birthday Envelope 14", layer = "hand", path = GFX .. "cosmetics/hand/hbd14.xml", weight = 100 },
+      { id = "hbd16", name = "Happy Birthday Envelope 15", layer = "hand", path = GFX .. "cosmetics/hand/hbd15.xml", weight = 100 },
+      { id = "hbd17", name = "Happy Birthday Mailbox", layer = "hand", path = GFX .. "cosmetics/hand/hbd16.xml", weight = 75 },
+      { id = "hbd18", name = "Happy Birthday Door", layer = "hand", path = GFX .. "cosmetics/hand/hbd_door.xml", weight = 35 },
     },
     -- Decorative frames. Under gfx/cosmetics/border/. Variant-specific:
     -- giftling (interactable) and moist_mob (mob/gifter) borders.
