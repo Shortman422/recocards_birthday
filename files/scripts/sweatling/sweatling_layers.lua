@@ -111,13 +111,13 @@ function M.layers_for_user(u)
     end
 
     push("body", cosmetic_path("body", u.body))
+    push("neck", cosmetic_path("neck", u.neck))
     if u.full_head ~= nil then
         push("full_head", cosmetic_path("full_head", u.full_head))
     else
         push("face", cosmetic_path("face", u.face))
         push("hat", cosmetic_path("hat", u.hat))
     end
-    push("neck", cosmetic_path("neck", u.neck))
 
     return layers
 end
@@ -134,6 +134,7 @@ function M.layers_random()
     end
 
     push("body", cmap.random("body"))
+    push("neck", cmap.random("neck"))
     local head = cmap.random_head() or {}
     if head.full_head ~= nil then
         push("full_head", head.full_head)
@@ -141,7 +142,6 @@ function M.layers_random()
         push("face", head.face)
         push("hat", head.hat)
     end
-    push("neck", cmap.random("neck"))
 
     return layers
 end
