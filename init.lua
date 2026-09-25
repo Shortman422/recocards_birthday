@@ -233,6 +233,18 @@ local recocards_by_id = {}
 local pending_spawns = {}
 local quest_zones_cache = {}
 local loaded_manifest_text = ""
+local cached_config = nil
+local cached_config_frame = -1000000
+local CONFIG_CACHE_FRAMES = 300
+
+local function get_cached_config()
+    local frame = GameGetFrameNum()
+    if cached_config == nil or frame - cached_config_frame >= CONFIG_CACHE_FRAMES then
+        cached_config = RQ_ReadConfig(CFG)
+        cached_config_frame = frame
+    end
+    return cached_config
+end
 
 local function intersects(a,b,margin)
     return not (
@@ -819,7 +831,7 @@ local function build_quest()
     local zones = RQ_ReadZones(ZONES)
     quest_zones_cache = zones
 
-    local cfg = RQ_ReadConfig(CFG)
+    local cfg = get_cached_config()
     if #cards == 0 or #zones == 0 then return end
 
     local note_w = 18
@@ -1202,7 +1214,7 @@ end
 
 local function find_safe_spawn_in_zone(pending)
     local zone = pending.zone
-    local cfg = RQ_ReadConfig(CFG)
+    local cfg = get_cached_config()
 
     local attempts =
         tonumber(cfg.safe_spawn_attempts) or 120
@@ -1460,7 +1472,7 @@ local function nearest_undiscovered_card()
 end
 
 local function update_dev_tools()
-    local cfg = RQ_ReadConfig(CFG)
+    local cfg = get_cached_config()
     if tonumber(cfg.dev_mode) ~= 1 then return end
 
     local hx = tonumber(cfg.hud_x) or 16
@@ -1532,7 +1544,7 @@ local function draw_hud()
             )
         ) or 0
 
-    local cfg = RQ_ReadConfig(CFG)
+    local cfg = get_cached_config()
     local hud_x = tonumber(cfg.hud_x) or 16
     local hud_y = tonumber(cfg.hud_y) or 58
     local progress_x = hud_x
@@ -1587,7 +1599,7 @@ local function draw_book()
         return
     end
 
-    local cfg = RQ_ReadConfig(CFG)
+    local cfg = get_cached_config()
     local maxw = tonumber(cfg.book_image_width) or 320
     local maxh = tonumber(cfg.book_image_max_height) or 205
     local card_page_width = tonumber(cfg.book_card_page_width) or 70
